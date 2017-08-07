@@ -1,30 +1,49 @@
 package service
 
-import akka.actor.ActorSystem
+import actors.{AccountGeneratorActor, BillerActor, UserDatabaseActor}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
+import models.Biller
+import org.apache.log4j.Logger
+
 import scala.concurrent.duration.DurationInt
-import models.UserAccount
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 
 trait UserAccountService {
 
-  def createAccount(listOfUsers: List[List[String]]) = {
+  implicit val timeout = Timeout(10 seconds)
+  val logger: Logger = Logger.getLogger(this.getClass)
 
-    val system = ActorSystem("UserAccountGeneratorSystem")
-    val ref = system.actorOf(AccountGeneratorActor.props)
+  def createAccount(listOfUsers: List[List[String]], ref: ActorRef): Future[List[(String, String)]] = {
 
-    implicit val timeout = Timeout(1000 seconds)
-    val accountsList = listOfUsers.map(ref ? _)
-    print(accountsList)
+    Thread.sleep(4000)
+    val accountsListOfFuture = listOfUsers.map(ref ? _).map(_.mapTo[(String, String)])
+    Future.sequence(accountsListOfFuture)
+  }
+
+  def linkBillers(accountNumber: Long, biller: Biller, billerRef: ActorRef): Future[String] = {
+
+    Thread.sleep(4000)
+    logger.info(s"Linking Biller with account $accountNumber")
+    (billerRef ? (accountNumber, biller)).mapTo[String]
+
   }
 
 }
 
 object Major extends App with UserAccountService{
 
-  createAccount(List(List("divya", "mzn", "dd", "1000"), List("divyadua", "mzn", "dd", "1000")))
+  val system = ActorSystem("UserAccountGeneratorSystem")
+  val userDatabaseActorRef: ActorRef = system.actorOf(UserDatabaseActor.props)
+  val accountGenertorActorRef: ActorRef = system.actorOf(AccountGeneratorActor.props(userDatabaseActorRef))
+  val billerRef: ActorRef = system.actorOf(BillerActor.props(userDatabaseActorRef))
 
+  createAccount(List(List("divya", "mzn", "dd", "1000"), List("divyadua", "mzn", "dd", "1000"),
+    List("divyadua", "mzn", "dd", "1000")), accountGenertorActorRef)
 
+  Thread.sleep(5000)
+  print(linkBillers(1000, Biller("phone", "Divya", 1000), billerRef))
 }

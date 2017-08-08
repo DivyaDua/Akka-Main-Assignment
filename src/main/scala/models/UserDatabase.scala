@@ -8,10 +8,16 @@ import scala.collection.mutable.{ListBuffer, Map}
 
 class UserDatabase {
 
-  val userAccountMap: mutable.Map[String, UserAccount] = Map("divya" -> UserAccount(900,"Divya", "Muzaffarnagar", "divya", 100),
+  val userAccountMap: mutable.Map[String, UserAccount] = mutable.Map("divya" -> UserAccount(900,"Divya", "Muzaffarnagar", "divya", 100),
    "neha" -> UserAccount(901,"Neha", "Muzaffarnagar", "neha", 1000))
 
-  val accountBillerMap: mutable.Map[Long, ListBuffer[Biller]] = Map(900L -> ListBuffer(Biller("phone", "PhoneBiller", 900), Biller("electricity", "ElectricityBiller", 900)))
+  val accountBillerMap: mutable.Map[Long, ListBuffer[Biller]] = mutable.Map(900L -> ListBuffer(Biller("phone", "PhoneBiller", 900),
+    Biller("electricity", "ElectricityBiller", 900)))
+
+  def addAccount(userName: String, userAccount: UserAccount): mutable.Map[String, UserAccount] = {
+    userAccountMap += (userName -> userAccount)
+    userAccountMap
+  }
 
   def linkBillers(accountNumber: Long, biller: Biller): mutable.Map[Long, ListBuffer[Biller]] = {
 
@@ -20,31 +26,41 @@ class UserDatabase {
       val listOfBillers: ListBuffer[Biller] = getLinkedBillers(accountNumber)
       listOfBillers += biller
       accountBillerMap(accountNumber) = listOfBillers
-      println("Updated map " + accountBillerMap)
       accountBillerMap
     }
     else {
       accountBillerMap += (accountNumber -> ListBuffer(biller))
-      println("Updated map " + accountBillerMap)
       accountBillerMap
     }
   }
 
 
   def getLinkedBillers(accountNumber: Long): ListBuffer[Biller] = {
-    if (accountBillerMap.contains(accountNumber))
+    if (accountBillerMap.contains(accountNumber)) {
       accountBillerMap(accountNumber)
-    else ListBuffer()
+    }
+    else {
+      ListBuffer()
+    }
   }
 
-  def depositSalary(accountNumber: Long, accountHolderName: String, salary: Double): Unit = {
+  def depositSalary(accountNumber: Long, accountHolderName: String, salary: Double): Boolean = {
 
-    userAccountMap foreach  {
-      case (userName, userAccount) =>
-        if(userAccount.accountNumber == accountNumber){
+    val result =  for {(userName, userAccount) <- userAccountMap
+        bool = if(userAccount.accountNumber == accountNumber){
           userAccountMap(userName) = userAccount.copy(initialAmount = userAccount.initialAmount + salary)
+          true
         }
-        else userAccountMap(userName) = userAccount
+        else {
+          userAccountMap(userName) = userAccount
+          false
+        }
+    } yield (userAccount.accountNumber, bool)
+    if(result.contains(accountNumber)){
+      result(accountNumber)
+    }
+    else{
+      false
     }
   }
 
@@ -59,7 +75,7 @@ class UserDatabase {
 
   }
 
-  def payBill(accountNumber: Long, billerCategory: String, billAmount: Double): mutable.Iterable[String] = {
+  def payBill(accountNumber: Long, billAmount: Double, billerCategory: String): String = {
 
     val result = for {
        (userName, userAccount) <- userAccountMap
@@ -75,7 +91,6 @@ class UserDatabase {
             val updatedListOfBillers: ListBuffer[Biller] = for (biller <- listOfBillers)
               yield updatedBillers(biller, billAmount)
             updatedListOfBillers.foreach(getLinkedBillers(accountNumber) += _)
-            println("Updated map " + userAccountMap + " updated biller " + accountBillerMap)
             "Bill paid"
           }
           else {
@@ -83,10 +98,16 @@ class UserDatabase {
           }
         }
         else {
-          "No such account exists"
+          "Account does not match"
         }
-    } yield resultString
-    result
+    } yield (userAccount.accountNumber,resultString)
+
+    if(result.contains(accountNumber)) {
+      result(accountNumber)
+    }
+    else{
+      "No such account exists"
+    }
   }
 
 

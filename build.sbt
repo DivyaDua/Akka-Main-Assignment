@@ -16,5 +16,4 @@ libraryDependencies += "org.mockito" % "mockito-all" % "1.9.5" % "test"
 
 libraryDependencies += "log4j" % "log4j" % "1.2.17"
 
-//libraryDependencies += "org.scalatest" % "scalatest_2.12" % "3.0.3" % "test"
-        
+coverageEnabled:=true

@@ -15,6 +15,8 @@ class AccountGeneratorActor(userDatabaseRef: ActorRef) extends Actor with ActorL
         case _ => log.info("Accounts cannot be created, Undefined for such values")
           sender() ! "Invalid Information"
       }
+    case _ => log.info("invalid list received")
+      sender() ! "Invalid Information"
   }
 }
 

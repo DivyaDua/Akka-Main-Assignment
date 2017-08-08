@@ -5,7 +5,7 @@ import models.Biller
 
 class BillerActor(databaseActorRef: ActorRef) extends Actor with ActorLogging {
 
-  override def receive = {
+  override def receive: PartialFunction[Any, Unit] = {
 
     case (accountNumber: Long, biller: Biller) =>
 
@@ -27,3 +27,4 @@ object BillerActor{
 
   def props(databaseActorRef: ActorRef): Props = Props(classOf[BillerActor], databaseActorRef)
 }
+

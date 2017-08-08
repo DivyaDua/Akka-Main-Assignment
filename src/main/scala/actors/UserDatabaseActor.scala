@@ -3,7 +3,7 @@ package actors
 import akka.actor.{Actor, ActorLogging, Props}
 import models.{Biller, UserAccount, UserDatabase}
 
-class UserDatabaseActor extends UserDatabase with Actor with ActorLogging{
+class UserDatabaseActor(userDatabase: UserDatabase) extends Actor with ActorLogging{
 
   var accountNumberValue = 0
 
@@ -11,31 +11,32 @@ class UserDatabaseActor extends UserDatabase with Actor with ActorLogging{
 
     case (userName: String, userDetails: List[String]) =>
       log.info("Trying to create account")
-      if (!userAccountMap.contains(userName)) {
-        userAccountMap += (userName -> UserAccount(accountNumberValue.toString :: userDetails))
+      if (!userDatabase.userAccountMap.contains(userName)) {
         accountNumberValue += 1
+        userDatabase.addAccount(userName, UserAccount(accountNumberValue.toString :: userDetails))
         sender() ! (userName, "Account Created")
       }
-      else
+      else {
         sender() ! (userName, "Username already exists")
+      }
 
     case (accountNumber: Long, biller: Biller) =>
-      linkBillers(accountNumber, biller)
+      userDatabase.linkBillers(accountNumber, biller)
       log.info("Biller Linked")
       sender() ! "Task of linking is done"
 
     case (accountNumber: Long, accountHolderName: String, salary: Double) =>
-      depositSalary(accountNumber, accountHolderName, salary)
-      log.info("Salary Deposited")
+      log.info("Depositing salary")
+      sender() ! userDatabase.depositSalary(accountNumber, accountHolderName, salary)
 
-    case accountNumber: Long => sender() ! getLinkedBillers(accountNumber).map(_.billerCategory)
+    case accountNumber: Long => sender() ! userDatabase.getLinkedBillers(accountNumber).map(_.billerCategory)
 
     case (accountNumber: Long, billAmount: Double, billerCategory: String) =>
-      sender() ! payBill(accountNumber, billerCategory, billAmount)
+      sender() ! userDatabase.payBill(accountNumber, billAmount, billerCategory)
       log.info("All bills paid")
   }
 }
 
 object UserDatabaseActor{
-  def props: Props = Props(classOf[UserDatabaseActor])//.withDispatcher("my-dispatcher")
+  def props(userDatabase: UserDatabase): Props = Props(classOf[UserDatabaseActor],userDatabase)//.withDispatcher("my-dispatcher")
 }

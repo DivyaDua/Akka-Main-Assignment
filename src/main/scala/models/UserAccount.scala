@@ -6,6 +6,6 @@ object UserAccount{
 
   def apply(listOfInformation: List[String]): UserAccount = {
     UserAccount(listOfInformation.head.toLong, listOfInformation(1), listOfInformation(2),
-      listOfInformation(3),listOfInformation(4).toDouble)
+      listOfInformation(3),listOfInformation.last.toDouble)
   }
 }

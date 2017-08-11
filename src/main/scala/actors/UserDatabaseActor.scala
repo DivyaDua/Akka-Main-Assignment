@@ -21,9 +21,9 @@ class UserDatabaseActor(userDatabase: UserDatabase) extends Actor with ActorLogg
       }
 
     case (accountNumber: Long, biller: Biller) =>
-      userDatabase.linkBillers(accountNumber, biller)
-      log.info("Biller Linked")
-      sender() ! "Task of linking is done"
+      log.info("linking biller by using user database method")
+      sender() ! userDatabase.linkBillers(accountNumber, biller)
+
 
     case (accountNumber: Long, accountHolderName: String, salary: Double) =>
       log.info("Depositing salary")

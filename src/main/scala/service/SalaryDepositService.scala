@@ -1,35 +1,25 @@
 package service
 
-import actors.{SalaryDepositActor, UserDatabaseActor}
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import models.UserDatabase
+import org.apache.log4j.Logger
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait SalaryDepositService {
+class SalaryDepositService {
+
+  val logger: Logger = Logger.getLogger(this.getClass)
 
   def depositSalary(accountNumber: Long, accountHolderName: String,
-                    salaryAmount: Double, salaryDepositActorRef: ActorRef): Future[String] = {
+                    salaryAmount: Double, salaryDepositActorRef: ActorRef): Future[Boolean] = {
 
+    logger.info("Inside deposit salary method")
     implicit val timeout = Timeout(10 seconds)
-    val result = (salaryDepositActorRef ? (accountNumber, accountHolderName, salaryAmount)).mapTo[String]
-    result
+    (salaryDepositActorRef ? (accountNumber, accountHolderName, salaryAmount)).mapTo[Boolean]
   }
 
 }
 
-/*
-object Major1 extends App with SalaryDepositService{
-
-  val userDatabase = new UserDatabase
-  val system = ActorSystem("UserAccountGeneratorSystem")
-  val userDatabaseActorRef: ActorRef = system.actorOf(UserDatabaseActor.props(userDatabase))
-  val salaryDepositActorRef: ActorRef = system.actorOf(SalaryDepositActor.props(userDatabaseActorRef))
-
-  depositSalary(900, "Divya", 2000.0, salaryDepositActorRef)
-}
-*/

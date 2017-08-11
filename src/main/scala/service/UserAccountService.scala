@@ -12,13 +12,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-trait UserAccountService {
+class UserAccountService {
 
   implicit val timeout = Timeout(10 seconds)
   val logger: Logger = Logger.getLogger(this.getClass)
 
   def createAccount(listOfUsers: List[List[String]], ref: ActorRef): Future[List[(String, String)]] = {
 
+    logger.info("Inside Create account method")
     Thread.sleep(4000)
     val accountsListOfFuture = listOfUsers.map(ref ? _).map(_.mapTo[(String, String)])
     Future.sequence(accountsListOfFuture)
@@ -34,19 +35,3 @@ trait UserAccountService {
 
 }
 
-/*
-object Major extends App with UserAccountService{
-
-  val userDatabase = new UserDatabase
-  val system = ActorSystem("UserAccountGeneratorSystem")
-  val userDatabaseActorRef: ActorRef = system.actorOf(UserDatabaseActor.props(userDatabase))
-  val accountGenertorActorRef: ActorRef = system.actorOf(AccountGeneratorActor.props(userDatabaseActorRef))
-  val billerRef: ActorRef = system.actorOf(BillerActor.props(userDatabaseActorRef))
-
-  createAccount(List(List("divya", "mzn", "dd", "1000"), List("divyadua", "mzn", "dd", "1000"),
-    List("divyadua", "mzn", "dd", "1000")), accountGenertorActorRef)
-
-  Thread.sleep(5000)
-  print(linkBillers(1000, Biller("phone", "Divya", 1000), billerRef))
-}
-*/

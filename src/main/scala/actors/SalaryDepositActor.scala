@@ -54,6 +54,7 @@ class BillProcessingActor(databaseServiceActorRef: ActorRef) extends Actor with 
         case "food" => databaseServiceActorRef.forward(accountNo, FOOD_BILL, "food")
 
       }
+    case _ => sender() ! "Invalid Inputs"
   }
 
 }

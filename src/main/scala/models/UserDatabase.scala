@@ -19,18 +19,23 @@ class UserDatabase {
     userAccountMap
   }
 
-  def linkBillers(accountNumber: Long, biller: Biller): mutable.Map[Long, ListBuffer[Biller]] = {
+  def linkBillers(accountNumber: Long, biller: Biller): String = {
 
     if (accountBillerMap.contains(accountNumber)) {
 
       val listOfBillers: ListBuffer[Biller] = getLinkedBillers(accountNumber)
-      listOfBillers += biller
-      accountBillerMap(accountNumber) = listOfBillers
-      accountBillerMap
+      if(listOfBillers.exists(_.billerCategory == biller.billerCategory)){
+        s"Biller of category ${biller.billerCategory} is already linked with this account"
+      }
+      else {
+        listOfBillers += biller
+        accountBillerMap(accountNumber) = listOfBillers
+        "Biller is successfully linked"
+      }
     }
     else {
       accountBillerMap += (accountNumber -> ListBuffer(biller))
-      accountBillerMap
+      "Biller is successfully linked"
     }
   }
 

@@ -11,12 +11,11 @@ case class Biller(billerCategory: String, billerName: String, accountNumber: Lon
 object Biller{
 
   def apply(billerCategory: String, billerName: String, accountNumber: Long): Biller = {
-
     val dateFormat = new SimpleDateFormat("d-M-y")
     val currentDate = dateFormat.format(Calendar.getInstance().getTime)
 
     Biller(billerCategory, billerName, accountNumber, currentDate, 0.0, 0, 0, 0.0)
-
   }
 
 }
+

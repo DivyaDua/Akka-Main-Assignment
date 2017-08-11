@@ -8,7 +8,7 @@ import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 
 import scala.collection.mutable
-import scala.collection.mutable.{ListBuffer, Map}
+import scala.collection.mutable.ListBuffer
 
 class UserDatabaseActorTest extends TestKit(ActorSystem("test-system")) with FunSuiteLike
   with BeforeAndAfterAll with ImplicitSender with MockitoSugar{
@@ -57,11 +57,19 @@ class UserDatabaseActorTest extends TestKit(ActorSystem("test-system")) with Fun
   test("testing link billers case"){
 
     when(userDatabase.linkBillers(900L, Biller("car", "CarBiller", 900))) thenReturn
-      mutable.Map(900L -> ListBuffer(Biller("phone", "PhoneBiller", 900),
-      Biller("electricity", "ElectricityBiller", 900),Biller("car", "CarBiller", 900)))
+      "Biller is successfully linked"
 
     ref ! (900L,Biller("car", "CarBiller", 900))
-    expectMsg("Task of linking is done")
+    expectMsg("Biller is successfully linked")
+  }
+
+  test("testing link billers for existing biller"){
+
+    when(userDatabase.linkBillers(900L, Biller("phone", "PhoneBiller", 900))) thenReturn
+      "Biller of category phone is already linked with this account"
+
+    ref ! (900L,Biller("phone", "PhoneBiller", 900))
+    expectMsg("Biller of category phone is already linked with this account")
   }
 
   test("testing deposit salary case"){

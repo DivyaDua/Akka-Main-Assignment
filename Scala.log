@@ -20,3 +20,21 @@
 2017-08-07 17:21:54 INFO  Major$:28 - Linking Biller with account
 2017-08-07 17:26:25 INFO  Major$:28 - Linking Biller with account
 2017-08-07 17:28:32 INFO  Major$:28 - Linking Biller with account
+2017-08-10 21:32:53 INFO  MainClass$:18 - Executing create account method
+2017-08-10 21:32:53 INFO  MainClass$:22 - Inside Create account method
+2017-08-10 21:32:57 INFO  MainClass$:22 - Executing link billers method
+2017-08-10 21:33:01 INFO  MainClass$:31 - Linking Biller with account 1000
+2017-08-10 21:33:01 INFO  MainClass$:25 - Executing deposit salary method
+2017-08-10 21:33:01 INFO  MainClass$:19 - Inside deposit salary method
+2017-08-10 23:08:48 INFO  SalaryDepositService:19 - Inside deposit salary method
+2017-08-10 23:17:06 INFO  UserAccountService:22 - Inside Create account method
+2017-08-10 23:24:02 INFO  UserAccountService:22 - Inside Create account method
+2017-08-10 23:24:10 INFO  UserAccountService:31 - Linking Biller with account 1000
+2017-08-10 23:24:44 INFO  SalaryDepositService:19 - Inside deposit salary method
+2017-08-10 23:24:44 INFO  UserAccountService:22 - Inside Create account method
+2017-08-10 23:24:52 INFO  UserAccountService:31 - Linking Biller with account 1000
+2017-08-10 23:27:13 INFO  UserAccountService:22 - Inside Create account method
+2017-08-10 23:27:21 INFO  UserAccountService:31 - Linking Biller with account 1000
+2017-08-11 23:59:09 INFO  SalaryDepositService:19 - Inside deposit salary method
+2017-08-11 23:59:09 INFO  UserAccountService:22 - Inside Create account method
+2017-08-11 23:59:17 INFO  UserAccountService:31 - Linking Biller with account 1000

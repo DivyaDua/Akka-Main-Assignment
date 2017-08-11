@@ -34,8 +34,11 @@ class UserDatabaseTest extends FunSuite {
   }
 
   test("testing link billers method"){
-    assert(userDatabaseObject.linkBillers(900, Biller("car", "CarBiller", 900)) === Map(900 -> ListBuffer(Biller("phone", "PhoneBiller", 900),
-      Biller("electricity", "ElectricityBiller", 900),Biller("car", "CarBiller", 900)) ))
+    assert(userDatabaseObject.linkBillers(900, Biller("car", "CarBiller", 900)) === "Biller is successfully linked")
+  }
+
+  test("testing link billers method for already existing biller"){
+    assert(userDatabaseObject.linkBillers(900, Biller("phone", "PhoneBiller", 900)) === "Biller of category phone is already linked with this account")
   }
 
   test("testing pay bill method"){
